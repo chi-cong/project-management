@@ -1,65 +1,90 @@
+import "./modal-update-user.css";
+import React, { useEffect } from "react";
 import {
   Button,
   DatePicker,
-  Dropdown,
-  Flex,
+  Form,
+  FormProps,
   Input,
-  MenuProps,
   message,
   Modal,
+  Select,
   Space,
 } from "antd";
-import React from "react";
-import "./modal-update-user.css";
-import { DownOutlined } from "@ant-design/icons";
+import { userRoleOptions } from "src/share/utils";
+import dayjs, { Dayjs } from "dayjs";
+import { RoleResponse, User, UserRole } from "src/share/models";
+import { useUpdateUserMutation } from "src/share/services";
+
+interface IUpdateUser {
+  user_id?: string;
+  username?: string;
+  name: string;
+  email: string;
+  phone: string;
+  birthday?: string | Dayjs;
+  role?: UserRole;
+}
+
 type ModalUpdateUser = {
   isModalOpen: boolean;
-  setIsModalOpen: any;
+  setIsModalOpen: (isShown: boolean) => void;
+  user: User;
 };
+
 const ModalUpdateUser: React.FC<ModalUpdateUser> = ({
   isModalOpen,
   setIsModalOpen,
+  user,
 }) => {
-  const handleOk = () => {
-    setIsModalOpen(true);
+  const [updateUser] = useUpdateUserMutation();
+  const [form] = Form.useForm();
+
+  const onFinish: FormProps<IUpdateUser>["onFinish"] = async (values) => {
+    const sentValues = {
+      username: values.username!,
+      email: values.email,
+      name: values.name,
+      role: values.role!,
+      birthday: values.birthday,
+      phone: values.phone || "",
+    };
+    await updateUser({ userId: user.user_id, values: sentValues })
+      .unwrap()
+      .then(() => {
+        setIsModalOpen(false);
+        message.success("New user is created");
+      })
+      .catch((e) => {
+        message.error(e.data.message);
+      });
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const items: MenuProps["items"] = [
-    {
-      label: "Admin",
-      key: "ADMIN",
-    },
-    {
-      label: "Staff",
-      key: "STAFF",
-    },
-    {
-      label: "Project Manager",
-      key: "PROJECT_MANAGER",
-    },
-    {
-      label: "Manager",
-      key: "MANAGER",
-    },
-  ];
-  const handleMenuClick: MenuProps["onClick"] = (e) => {
-    console.log("click", e);
-  };
-  const menuProps = {
-    items,
-    onClick: handleMenuClick,
-  };
+
+  useEffect(() => {
+    form.setFieldsValue({
+      ...user,
+      email: user.email,
+      name: user.name,
+      phone: user.phone,
+      role: user.role && (user.role as RoleResponse).name,
+      birthday: dayjs(
+        user.birthday ? (user.birthday as string).substring(0, 10) : new Date()
+      ),
+    });
+  });
+
   return (
     <Modal
-      className="wrapper"
+      className='wrapper'
       open={isModalOpen}
       centered
-      onOk={handleOk}
       onCancel={handleCancel}
       width={1000}
+      footer={[]}
     >
       <h2
         style={{
@@ -70,49 +95,69 @@ const ModalUpdateUser: React.FC<ModalUpdateUser> = ({
       >
         Update User
       </h2>
-      <Space direction="vertical" size="middle" style={{ display: "flex" }}>
+      <Form name='user-info' onFinish={onFinish} layout='vertical' form={form}>
         <div>
-          <span>Name</span>
-          <Input placeholder="Name..." size="large" />
+          <Form.Item<IUpdateUser> name='name' label='Name'>
+            <Input placeholder='Name...' size='large' />
+          </Form.Item>
         </div>
         <div>
-          <span>Username</span>
-          <Input placeholder="Username..." size="large" />
+          <Form.Item<IUpdateUser>
+            name='username'
+            rules={[{ required: true, message: "Username is required" }]}
+            label='Username'
+          >
+            <Input placeholder='Username...' size='large' />
+          </Form.Item>
         </div>
         <div>
-          <span>Phone</span>
-          <Input placeholder="Phone..." size="large" />
+          <Form.Item<IUpdateUser> name='phone' label='Phone'>
+            <Input placeholder='Phone...' size='large' />
+          </Form.Item>
         </div>
         <div>
-          <span>Email</span>
-          <Input placeholder="Email..." size="large" />
+          <Form.Item<IUpdateUser>
+            name='email'
+            label='Email'
+            rules={[{ required: true, message: "Email is required" }]}
+          >
+            <Input placeholder='Email...' size='large' />
+          </Form.Item>
         </div>
         <div>
-          <span>Birthday</span>
-          <DatePicker
-            placeholder="Birthday..."
-            size="large"
-            style={{ width: "100%" }}
-          />
+          <Form.Item<IUpdateUser> name='birthday' label='Birthday'>
+            <DatePicker
+              placeholder='Birthday...'
+              size='large'
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
         </div>
         <div>
-          <span>Roles</span>
-          <Dropdown menu={menuProps}>
-            <Button
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "end",
-              }}
-            >
-              <Space>
-                <DownOutlined />
-              </Space>
+          <Form.Item<IUpdateUser>
+            name='role'
+            label='Roles'
+            rules={[{ required: true, message: "Role is required" }]}
+          >
+            <Select options={userRoleOptions} size='large' />
+          </Form.Item>
+        </div>
+        <Form.Item className='update-user-form-btn'>
+          <Space>
+            <Button type='primary' htmlType='submit' size='large'>
+              Create
             </Button>
-          </Dropdown>
-        </div>
-      </Space>
+            <Button
+              type='primary'
+              ghost
+              size='large'
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+          </Space>
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };

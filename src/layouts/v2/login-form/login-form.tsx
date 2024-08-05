@@ -31,7 +31,6 @@ export const LoginForm = () => {
         sessionStorageUtil.set("accessToken", resp.data.tokens.accessToken);
         localStorageUtil.set("refreshToken", resp.data.tokens.refreshToken);
         sessionStorageUtil.set("role", resp.data.role);
-        localStorageUtil.set("accessDate", Date.now() + 86400000);
         navigate("/dashboard");
       })
       .catch(() => {

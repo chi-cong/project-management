@@ -1,30 +1,27 @@
 import React, { useState } from "react";
-import { Button, Card, Col, Modal, Popconfirm, Row, Space } from "antd";
+import { Card, Col, Popconfirm, Row, Space } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import "./card-account.css";
-import { useDeleteDepartmentsMutation } from "src/share/services";
-import { CustomAvatar } from "src/components/v2/custom-avatar";
-import UpdateUserModal from "../modal-update-user";
+import { useDeleteUserMutation } from "src/share/services";
+import { CustomAvatar } from "src/components/v2";
+import UpdateUserModal from "src/components/modal-update-user";
+import { RoleResponse, User } from "src/share/models";
 type CardAccount = {
-  username?: string;
+  account: User;
   manager?: string;
   onClick?: () => void;
-  departmentId?: string;
+  userId?: string;
   staffCount?: number;
-  role?: string;
 };
 
 export const CardAccount: React.FC<CardAccount> = ({
-  username,
-  manager,
+  account,
   onClick,
-  departmentId,
-  staffCount,
-  role,
+  userId,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -32,46 +29,46 @@ export const CardAccount: React.FC<CardAccount> = ({
     setIsModalOpen(true);
   };
 
-  const [deleteDepartment] = useDeleteDepartmentsMutation();
+  const [deleteUser] = useDeleteUserMutation();
 
   const handleDeleteClick = async (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
   };
-  const deleteDapartment = async () => {
-    await deleteDepartment({ departmentId }).unwrap().then().catch();
+  const deleteAccount = async () => {
+    await deleteUser({ userId }).unwrap().then().catch();
   };
 
   return (
-    <div className="card-account-container">
+    <div className='card-account-container'>
       <Card
         hoverable
         bordered={false}
-        className="card-account"
+        className='card-account'
         onClick={onClick}
       >
-        <div className="account-wrapper">
-          <Row className="account-header">
-            <Col span={12} className="account-header-info">
-              <h3>{username}</h3>
-              <div className="account-role">Admin</div>
+        <div className='account-wrapper'>
+          <Row className='account-header'>
+            <Col span={12} className='account-header-info'>
+              <h3>{account.username}</h3>
+              <div className='account-role'>Admin</div>
             </Col>
-            <Col span={12} className="account-header-action">
-              {role !== "MANAGER" ? (
+            <Col span={12} className='account-header-action'>
+              {(account.role as RoleResponse).name !== "MANAGER" ? (
                 <Space>
                   <div
                     onClick={showModal}
-                    className="account-header-action-button"
+                    className='account-header-action-button'
                   >
                     <EditOutlined />
                   </div>
                   <div
-                    className="account-header-action-button icon-delete-account"
+                    className='account-header-action-button icon-delete-account'
                     onClick={handleDeleteClick}
                   >
                     <Popconfirm
-                      title="Are you sure to delete this account?"
+                      title='Are you sure to delete this account?'
                       icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-                      onConfirm={deleteDapartment}
+                      onConfirm={deleteAccount}
                     >
                       <DeleteOutlined />
                     </Popconfirm>
@@ -82,19 +79,19 @@ export const CardAccount: React.FC<CardAccount> = ({
               )}
             </Col>
           </Row>
-          <Row className="account-body">
-            <Col span={12} className="account-body-info">
-              <div className="">
-                <span>Vu Trong Dat</span>
+          <Row className='account-body'>
+            <Col span={12} className='account-body-info'>
+              <div className=''>
+                <span>{account.name}</span>
               </div>
               <div>
                 <span>
-                  <strong>Email:</strong> datvuhp2002@gmail.com
+                  <strong>Email:</strong> {account.email}
                 </span>
               </div>
               <div>
                 <span>
-                  <strong>Contact:</strong> 0395741123
+                  <strong>Contact:</strong> {account.phone}
                 </span>
               </div>
               <div>
@@ -103,14 +100,15 @@ export const CardAccount: React.FC<CardAccount> = ({
                 </span>
               </div>
             </Col>
-            <Col span={12} className="account-body-avatar">
-              <CustomAvatar size={100} userName="Dat" />
+            <Col span={12} className='account-body-avatar'>
+              <CustomAvatar size={100} userName='Dat' />
             </Col>
           </Row>
           <UpdateUserModal
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
-          ></UpdateUserModal>
+            user={account}
+          />
         </div>
       </Card>
     </div>

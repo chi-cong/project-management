@@ -1,19 +1,17 @@
-import { Typography } from "antd";
 import { OUserRole } from "src/share/models";
 
 import type { DefaultOptionType } from "antd/es/select";
 
-const { Text } = Typography;
 export const userRoleOptions: DefaultOptionType[] = [
-  { label: <Text>Admin</Text>, value: OUserRole.Admin },
-  { label: <Text>Manager</Text>, value: OUserRole.Manager },
-  { label: <Text>Staff</Text>, value: OUserRole.Staff },
-  { label: <Text>Project Manager</Text>, value: OUserRole.ProjectManager },
+  { label: "Admin", value: OUserRole.Admin },
+  { label: "Manager", value: OUserRole.Manager },
+  { label: "Staff", value: OUserRole.Staff },
+  { label: "Project Manager", value: OUserRole.ProjectManager },
 ];
 export const filterRoleOptions: DefaultOptionType[] = [
-  { label: <Text>All</Text>, value: OUserRole.All },
-  { label: <Text>Admin</Text>, value: OUserRole.Admin },
-  { label: <Text>Manager</Text>, value: OUserRole.Manager },
-  { label: <Text>Staff</Text>, value: OUserRole.Staff },
-  { label: <Text>Project Manager</Text>, value: OUserRole.ProjectManager },
+  { label: "All", value: OUserRole.All },
+  { label: "Admin", value: OUserRole.Admin },
+  { label: "Manager", value: OUserRole.Manager },
+  { label: "Staff", value: OUserRole.Staff },
+  { label: "Project Manager", value: OUserRole.ProjectManager },
 ];

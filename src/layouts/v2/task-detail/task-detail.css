@@ -1,4 +1,4 @@
-@import url(src/index.css);
+@import url(//src/index.css);
 
 .task-detail-modal {
   transition-duration: 300ms;

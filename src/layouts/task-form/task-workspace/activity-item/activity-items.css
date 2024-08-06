@@ -1,4 +1,4 @@
-@import url(src/index.css);
+@import url(//src/index.css);
 
 .edit-acti-btn {
   color: var(--success-color);

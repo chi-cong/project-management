@@ -16,6 +16,7 @@ import {
   Account,
 } from "src/pages/v2";
 import App from "src/App";
+import { Profile } from "src/pages/v2/profile";
 
 export const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -74,6 +75,10 @@ export const router = createBrowserRouter([
             children: [{ path: "account", element: <Account /> }],
           },
         ],
+      },
+      {
+        path: "profile",
+        element: <Profile />,
       },
       {
         path: "test-route",

@@ -19,6 +19,18 @@ export const DepartmentProjects = ({ title }: DepartmentProjectsProp) => {
               description: "what ever, bye bye bye",
             }}
           />
+          <ProjectCard
+            project={{
+              name: "chat app",
+              description: "what ever, bye bye bye",
+            }}
+          />
+          <ProjectCard
+            project={{
+              name: "chat app",
+              description: "what ever, bye bye bye",
+            }}
+          />
         </div>
       </div>
     </div>
